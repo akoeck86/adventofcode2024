@@ -1,6 +1,5 @@
 import java.io.*;
 import java.nio.file.Path;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class Day01 {
         var reader = new BufferedReader(new FileReader(file));
         String line;
         while((line = reader.readLine()) != null) {
-            var parts = line.split("   ");
+            var parts = line.split("\\s+");
             if(parts.length == 2) {
                 array1.add(Integer.parseInt(parts[0]));
                 array2.add(Integer.parseInt(parts[1]));
