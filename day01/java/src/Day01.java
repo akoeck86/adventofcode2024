@@ -1,6 +1,9 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Day01 {
 
@@ -10,10 +13,7 @@ public class Day01 {
         readFile(args[0], input1, input2);
 
         // Part 1
-        quickSort(input1, 0, input1.size() - 1);
-        quickSort(input2, 0, input2.size() - 1);
-        // Result Part 1
-        System.out.println("Result Part 1: " + caluclateTotalDistance(input1, input2));
+        part1(input1, input2);
 
         // Part 2
         var countMap = createCount(input1, input2);
@@ -24,9 +24,9 @@ public class Day01 {
         var file = Path.of(path).toFile();
         var reader = new BufferedReader(new FileReader(file));
         String line;
-        while((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             var parts = line.split("\\s+");
-            if(parts.length == 2) {
+            if (parts.length == 2) {
                 array1.add(Integer.parseInt(parts[0]));
                 array2.add(Integer.parseInt(parts[1]));
             }
@@ -34,39 +34,12 @@ public class Day01 {
         reader.close();
     }
 
-    private static void quickSort(List<Integer> array, int low, int high) {
-        if (low < high) {
-            int pivotIndex = partition(array, low, high);
-            quickSort(array, low, pivotIndex - 1);
-            quickSort(array, pivotIndex + 1, high);
-        }
-    }
-
-    private static int partition(List<Integer> array, int low, int high) {
-        int pivot = array.get(high);
-        int i = low - 1;
-
-        for (int j = low; j < high; j++) {
-            if (array.get(j) <= pivot) {
-                i++;
-                int temp = array.get(i);
-                array.set(i,array.get(j));
-                array.set(j, temp);
-            }
-        }
-        int temp = array.get(i + 1);
-        array.set(i + 1,array.get(high));
-        array.set(high, temp);
-        return i + 1;
-    }
-
-
-    private static int caluclateTotalDistance(List<Integer> input1, List<Integer> input2) {
-        List<Integer> distances = new ArrayList<>();
-        for(int i=0; i<input1.size(); i++) {
-            distances.add(Math.abs(input1.get(i) - input2.get(i)));
-        }
-        return distances.stream().reduce(0, Integer::sum);
+    private static void part1(List<Integer> input1, List<Integer> input2) {
+        var sortedInput1 = input1.stream().sorted().toList();
+        var sortedInput2 = input2.stream().sorted().toList();
+        var distance = IntStream.range(0, sortedInput1.size())
+                .map(index -> Math.abs(sortedInput1.get(index) - sortedInput2.get(index))).reduce(Integer::sum).orElse(0);
+        System.out.println("Result Part 1: " + distance);
     }
 
 
@@ -80,6 +53,7 @@ public class Day01 {
     private static long countInList(List<Integer> list, Integer number) {
         return list.stream().filter(n -> Objects.equals(n, number)).count();
     }
+
     private static long calucateSimiltritaryScore(Map<Integer, Long> input) {
         List<Long> values = new ArrayList<>();
         input.forEach((number, count) -> values.add(number * count));
